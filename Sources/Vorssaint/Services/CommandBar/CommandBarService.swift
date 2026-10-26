@@ -1703,6 +1703,10 @@ final class CommandBarService: ObservableObject {
     /// How many rows one group may show while browsing.
     private static let browseGroupLimit = 12
 
+    /// How many files a query written in the file syntax shows. The same
+    /// length as any other list: those rows have the bar to themselves.
+    private static let focusedFileRowLimit = 12
+
     /// How many rows each kind may contribute, so one provider never floods
     /// the list. Actions have no cap: they are what the bar is for.
     private static let kindLimits: [(prefix: String, limit: Int)] = [
@@ -1853,6 +1857,22 @@ final class CommandBarService: ObservableObject {
             }
         } else {
             fileSearch.cancelPending()
+        }
+
+        // `ext:pdf`, `size:>10mb` or a folder word like `Code/` is a request
+        // for files and nothing else. No other row could match those words, and
+        // the title ranking would throw out "report.pdf" for not containing
+        // "ext:pdf", so the files stand on their own in the order Spotlight
+        // and the sort gave them.
+        if isEnabled(.files), !fileScopeCache.isEmpty,
+           CommandBarFileSearchSupport.listsOnlyFiles(trimmed) {
+            // An answer worked out from the same text still leads, the way
+            // it does in the mixed list: the files never hide it.
+            let leading = [answer, openURL, scriptAnswer].compactMap { $0 }
+            let hidden = hiddenCache
+            let files = fileRows.lazy.filter { !hidden.contains($0.stableKey) }
+                .prefix(Self.focusedFileRowLimit - leading.count)
+            return leading + files
         }
 
         // "brilho 40" is a command with a value; "code 1234" is a search for

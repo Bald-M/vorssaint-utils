@@ -1819,7 +1819,7 @@ enum Defaults {
         DefaultsKey.commandBarAliases: "",
         DefaultsKey.commandBarPins: "",
         DefaultsKey.commandBarHidden: "",
-        DefaultsKey.commandBarFileScopes: "",
+        DefaultsKey.commandBarFileScopes: "~",
         DefaultsKey.commandBarFileIgnores: "",
         DefaultsKey.commandBarShortcut: GlobalShortcut.commandBarDefault.storageValue,
         DefaultsKey.commandBarPositionOffset: "",
