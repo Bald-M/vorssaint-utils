@@ -768,8 +768,12 @@ enum CommandBarFeatureTests {
 
         // MARK: Finding a file from the bar
         suite.expect(CommandBarFileSearchSupport.expression(for: "annual report")
-                == "kMDItemFSName == \"*annual*\"cd && kMDItemFSName == \"*report*\"cd",
+                == "(kMDItemFSName == \"*annual*\"cd || kMDItemDisplayName == \"*annual*\"cd)"
+                    + " && (kMDItemFSName == \"*report*\"cd || kMDItemDisplayName == \"*report*\"cd)",
                "every word has to be in the name, in any order")
+        suite.expect(CommandBarFileSearchSupport.expression(for: "接入")
+                == "(kMDItemFSName == \"*接入*\"cd || kMDItemDisplayName == \"*接入*\"cd)",
+               "a word is also asked of the display name, which Spotlight matches for CJK text")
         suite.expect(CommandBarFileSearchSupport.expression(for: "a") == nil
                 && CommandBarFileSearchSupport.expression(for: "   ") == nil,
                "one letter is not a search, so Spotlight is never asked")
@@ -921,7 +925,7 @@ enum CommandBarFeatureTests {
                "a sort alone asks for files, and keys and units ignore case")
         suite.expect(CommandBarFileSearchSupport.expression(
                     for: "ext:pdf;md kind:image size:>1kb invoice")
-                == "kMDItemFSName == \"*invoice*\"cd"
+                == "(kMDItemFSName == \"*invoice*\"cd || kMDItemDisplayName == \"*invoice*\"cd)"
                     + " && (kMDItemFSName == \"*.pdf\"c || kMDItemFSName == \"*.md\"c)"
                     + " && kMDItemContentTypeTree == \"public.image\""
                     + " && kMDItemFSSize > 1024",

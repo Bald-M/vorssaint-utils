@@ -211,7 +211,15 @@ enum CommandBarFileSearchSupport {
     /// they are checked against each answer afterwards. A query made only of
     /// them has nothing to ask and asks nothing.
     static func expression(for query: FileQuery) -> String? {
-        var clauses = query.nameWords.map { "kMDItemFSName == \"*\(escaped($0))*\"cd" }
+        // Each word is asked of the display name as well as the file name.
+        // Spotlight's file-name index misses many Chinese and Japanese
+        // substrings: "*接入*" finds nothing in "web 接入微信支付.md" while the
+        // display name of the same file matches. The display name alone is
+        // not enough either, since it drops an extension Finder hides.
+        var clauses = query.nameWords.map { word -> String in
+            let pattern = "\"*\(escaped(word))*\"cd"
+            return "(kMDItemFSName == \(pattern) || kMDItemDisplayName == \(pattern))"
+        }
         if !query.extensions.isEmpty {
             clauses.append(anyOf(query.extensions.map { "kMDItemFSName == \"*.\(escaped($0))\"c" }))
         }
