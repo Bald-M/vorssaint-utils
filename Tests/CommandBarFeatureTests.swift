@@ -877,6 +877,16 @@ enum CommandBarFeatureTests {
                "a backup cannot restore non-text file search preferences")
 
         // MARK: Everything-style file syntax
+        for language in AppLanguage.allCases {
+            let format = FeatureStrings.commandBar(language).filesShowAllFormat
+            suite.expect(format.components(separatedBy: "%@").count == 2
+                    && String(format: format, "200+").contains("200+"),
+                   "\(language) says how many files there are, with room for a capped count")
+        }
+        suite.expect(CommandBarPreferences.source(ofRowID: "file.showAll") == .files
+                && !CommandBarPreferences.acceptsPin(rowID: "file.showAll")
+                && !CommandBarPreferences.acceptsAlias(rowID: "file.showAll"),
+               "the show-all row belongs to Files and is never pinned or named")
         let plainFileQuery = CommandBarFileSearchSupport.parse("annual report")
         suite.expect(plainFileQuery.nameWords == ["annual", "report"] && !plainFileQuery.isFocused,
                "plain words stay filename words and keep the ordinary mixed list")
