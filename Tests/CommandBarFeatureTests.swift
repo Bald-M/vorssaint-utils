@@ -771,8 +771,8 @@ enum CommandBarFeatureTests {
                 == "(kMDItemFSName == \"*annual*\"cd || kMDItemDisplayName == \"*annual*\"cd)"
                     + " && (kMDItemFSName == \"*report*\"cd || kMDItemDisplayName == \"*report*\"cd)",
                "every word has to be in the name, in any order")
-        suite.expect(CommandBarFileSearchSupport.expression(for: "接入")
-                == "(kMDItemFSName == \"*接入*\"cd || kMDItemDisplayName == \"*接入*\"cd)",
+        suite.expect(CommandBarFileSearchSupport.expression(for: "入门")
+                == "(kMDItemFSName == \"*入门*\"cd || kMDItemDisplayName == \"*入门*\"cd)",
                "a word is also asked of the display name, which Spotlight matches for CJK text")
         suite.expect(CommandBarFileSearchSupport.expression(for: "a") == nil
                 && CommandBarFileSearchSupport.expression(for: "   ") == nil,

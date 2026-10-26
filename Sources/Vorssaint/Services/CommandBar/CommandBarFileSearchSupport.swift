@@ -213,9 +213,10 @@ enum CommandBarFileSearchSupport {
     static func expression(for query: FileQuery) -> String? {
         // Each word is asked of the display name as well as the file name.
         // Spotlight's file-name index misses many Chinese and Japanese
-        // substrings: "*接入*" finds nothing in "web 接入微信支付.md" while the
-        // display name of the same file matches. The display name alone is
-        // not enough either, since it drops an extension Finder hides.
+        // substrings: a word such as 入门 ("getting started") can match no
+        // file names at all, while the display names of the same files match.
+        // The display name alone is not enough either, since it drops an
+        // extension Finder hides.
         var clauses = query.nameWords.map { word -> String in
             let pattern = "\"*\(escaped(word))*\"cd"
             return "(kMDItemFSName == \(pattern) || kMDItemDisplayName == \(pattern))"
